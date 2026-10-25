@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from config.views import health
+from config.views import health, readiness
 from runs.views import (
     create_run_view,
     dashboard,
@@ -33,4 +33,5 @@ urlpatterns = [
     path("runs/new/", create_run_view, name="run-create"),
     path("runs/<uuid:run_id>/", run_detail, name="run-detail"),
     path("runs/confirm-plan/", confirm_dune_plan_view, name="run-confirm-plan"),
+    path("ready/", readiness, name="readiness"),
 ]
