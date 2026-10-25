@@ -1,0 +1,608 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10110f">
+  <meta name="description" content="Monitor workflow runs, approvals, and execution outcomes in Saffron.">
+  <title>Runs — Saffron</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #10110f;
+      --surface: #181916;
+      --surface-hover: #20211d;
+      --border: #2c2d28;
+      --text: #f5f5f0;
+      --muted: #a4a59c;
+      --accent: #b7f397;
+      --danger: #ffb5a8;
+      --warning: #f4d38a;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .nav {
+      min-height: 76px;
+      padding: 0 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      flex-shrink: 0;
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .accent { color: var(--accent); }
+
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      color: #b7b8ae;
+      font-size: 13px;
+    }
+
+    .navlinks a { transition: color 160ms ease; }
+    .navlinks a:hover { color: var(--text); }
+
+    .signout-form {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+    }
+
+    .signout-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 15px;
+      border: 1px solid #393a35;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .signout-button:hover {
+      background: var(--surface-hover);
+      border-color: #606154;
+    }
+
+    .signout-button span { color: var(--accent); }
+
+    .wrap {
+      width: min(1120px, 88%);
+      margin: 58px auto 90px;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: clamp(36px, 5vw, 58px);
+      line-height: 1.05;
+      letter-spacing: -2.5px;
+      font-weight: 650;
+    }
+
+    .muted { color: var(--muted); }
+
+    .intro {
+      margin: 12px 0 0;
+      color: var(--muted);
+      max-width: 600px;
+    }
+
+    .new-run-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 17px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: var(--accent);
+      color: #10110f;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .new-run-button:hover {
+      background: #c9ffab;
+      transform: translateY(-1px);
+    }
+
+    .new-run-button:focus-visible {
+      outline-color: var(--accent);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 36px 0;
+    }
+
+    .stat, .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 22px;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .stat:hover {
+      background: var(--surface-hover);
+      border-color: #414239;
+    }
+
+    .stat-label {
+      color: #aaa99f;
+      font-size: 13px;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -1px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-value.alert { color: var(--danger); }
+    .stat-value.warning { color: var(--warning); }
+
+    .panel { overflow: hidden; }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-heading-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: -0.3px;
+    }
+
+    .run-count {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .run {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 24px;
+      border-bottom: 1px solid #292a26;
+      transition: background 160ms ease;
+    }
+
+    .run:last-child { border-bottom: 0; }
+    .run:hover { background: var(--surface-hover); }
+
+    .objective {
+      font-weight: 650;
+      overflow-wrap: anywhere;
+    }
+
+    .run-id {
+      display: inline-block;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .meta {
+      margin-top: 6px;
+      color: #999a91;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      max-width: 100%;
+      padding: 5px 10px;
+      border: 1px solid transparent;
+      border-radius: 99px;
+      background: #292a26;
+      color: #ddd;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .status.QUEUED,
+    .status.PENDING,
+    .status.CANCELLED {
+      color: #d2d2c8;
+      background: #292a26;
+    }
+
+    .status.RUNNING,
+    .status.RECOVERING,
+    .status.RECONCILING {
+      color: #b9d8ff;
+      background: #202c3b;
+    }
+
+    .status.SUCCEEDED,
+    .status.APPROVED {
+      color: var(--accent);
+      background: #253323;
+    }
+
+    .status.FAILED,
+    .status.OUTCOME_UNKNOWN,
+    .status.DENIED,
+    .status.REJECTED {
+      color: var(--danger);
+      background: #392622;
+    }
+
+    .status.WAITING_APPROVAL,
+    .status.EXPIRED {
+      color: var(--warning);
+      background: #393323;
+    }
+
+    .empty {
+      padding: 52px 24px;
+      text-align: center;
+    }
+
+    .empty-mark {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 18px;
+      border: 1px solid #3b3c34;
+      border-radius: 14px;
+      color: var(--accent);
+      font-size: 22px;
+    }
+
+    .empty h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+      font-weight: 650;
+    }
+
+    .empty p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .empty-action { margin-top: 22px; }
+
+    .notice {
+      margin: 0 0 20px;
+      padding: 14px 16px;
+      border: 1px solid #55482c;
+      border-radius: 12px;
+      background: #28251b;
+      color: var(--warning);
+      font-size: 13px;
+    }
+
+    .messages {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      padding: 13px 16px;
+      border: 1px solid #34472d;
+      border-radius: 12px;
+      background: #20271c;
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 28px 6%;
+      border-top: 1px solid var(--border);
+      color: #77786f;
+      font-size: 11px;
+      letter-spacing: 0.7px;
+    }
+
+    .footer-brand {
+      color: #b7b8ae;
+      font-weight: 650;
+    }
+
+    @media (max-width: 760px) {
+      .nav {
+        min-height: 68px;
+        padding: 0 5%;
+      }
+
+      .navlinks {
+        gap: 14px;
+        font-size: 12px;
+      }
+
+      .wrap {
+        width: 90%;
+        margin: 40px auto 64px;
+      }
+
+      .page-heading { align-items: flex-start; }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 28px 0;
+      }
+
+      .stat { padding: 18px; }
+      .stat-value { font-size: 28px; }
+
+      .run {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        padding: 18px;
+      }
+
+      .run .status { justify-self: start; }
+      .panel-head { padding: 18px; }
+      footer { padding: 24px 5%; }
+    }
+
+    @media (max-width: 520px) {
+      .page-heading {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .heading-action { width: 100%; }
+      .heading-action .new-run-button { width: 100%; }
+
+      .panel-head {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .panel-heading-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand { font-size: 20px; }
+      .navlinks { gap: 10px; font-size: 11px; }
+      .navlinks .admin-link { display: none; }
+      h1 { letter-spacing: -1.6px; }
+      .stat { padding: 15px; }
+      .stat-label { font-size: 12px; }
+      .stat-value { font-size: 25px; }
+      .empty { padding: 40px 18px; }
+      .signout-button { padding: 8px 10px; }
+      footer { font-size: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="nav">
+    <a class="brand" href="/" aria-label="Saffron home">
+      saffron<span class="accent">.</span>
+    </a>
+
+    <nav class="navlinks" aria-label="Main navigation">
+      <a href="{% url 'runs-dashboard' %}" aria-current="page">Runs</a>
+      <a class="admin-link" href="{% url 'admin:index' %}">Admin</a>
+
+      <form class="signout-form" method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="signout-button" type="submit">
+          Sign out <span aria-hidden="true">↗</span>
+        </button>
+      </form>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="page-heading" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow">Saffron control plane</div>
+        <h1 id="page-title">Execution overview.</h1>
+        <p class="intro">
+          Track workflow runs, approvals, and uncertain outcomes.
+          Every status reflects recorded application state.
+        </p>
+      </div>
+
+      <div class="heading-action">
+        <a class="new-run-button" href="{% url 'run-create' %}">
+          <span aria-hidden="true">+</span> New workflow
+        </a>
+      </div>
+    </section>
+
+    {% if messages %}
+      <div class="messages" role="status" aria-label="Notifications">
+        {% for message in messages %}
+          <div class="message">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if pending_approvals or unresolved_outcomes %}
+      <div class="notice" role="status">
+        {% if pending_approvals %}
+          {{ pending_approvals }} approval{{ pending_approvals|pluralize }}
+          awaiting a decision.
+        {% endif %}
+
+        {% if pending_approvals and unresolved_outcomes %}<br>{% endif %}
+
+        {% if unresolved_outcomes %}
+          {{ unresolved_outcomes }} invocation{{ unresolved_outcomes|pluralize }}
+          with an unresolved outcome.
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <section class="stats" aria-label="Run summary">
+      <div class="stat">
+        <div class="stat-label">Total runs</div>
+        <div class="stat-value">{{ total_runs }}</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Running</div>
+        <div class="stat-value">{{ status_counts.RUNNING|default:0 }}</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Awaiting approval</div>
+        <div class="stat-value warning">{{ pending_approvals }}</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Unknown outcomes</div>
+        <div class="stat-value {% if unresolved_outcomes %}alert{% endif %}">
+          {{ unresolved_outcomes }}
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="recent-runs-title">
+      <div class="panel-head">
+        <h2 id="recent-runs-title">Recent runs</h2>
+
+        <div class="panel-heading-actions">
+          <span class="run-count">{{ total_runs }} total</span>
+          <a class="new-run-button" href="{% url 'run-create' %}">
+            <span aria-hidden="true">+</span> New workflow
+          </a>
+        </div>
+      </div>
+
+      {% for run in recent_runs %}
+        <a class="run" href="{% url 'run-detail' run.id %}">
+          <div>
+            <div class="objective">
+              {{ run.objective|default:"Untitled workflow" }}
+            </div>
+
+            <div class="meta">
+              <span class="run-id">Run {{ run.id }}</span>
+              · Created {{ run.created_at|date:"M j, Y · H:i" }}
+            </div>
+          </div>
+
+          <span class="status {{ run.status }}">
+            {{ run.get_status_display }}
+          </span>
+        </a>
+      {% empty %}
+        <div class="empty">
+          <div class="empty-mark" aria-hidden="true">↗</div>
+          <h3>No runs yet.</h3>
+          <p>Create a workflow to start building your execution history.</p>
+          <div class="empty-action">
+            <a class="new-run-button" href="{% url 'run-create' %}">
+              <span aria-hidden="true">+</span> Create your first workflow
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
+  </main>
+
+  <footer>
+    <span class="footer-brand">SAFFRON<span class="accent">.</span></span>
+    <span>CONTROLLED AI EXECUTION</span>
+  </footer>
+</body>
+</html>

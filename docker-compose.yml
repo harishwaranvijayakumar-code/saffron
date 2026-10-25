@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-saffron}
+      POSTGRES_USER: ${POSTGRES_USER:-saffron}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-saffron_dev_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - saffron_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  saffron_postgres_data:

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10110f">
+  <title>New workflow — Saffron</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #10110f;
+      --surface: #181916;
+      --border: #2c2d28;
+      --text: #f5f5f0;
+      --muted: #a4a59c;
+      --accent: #b7f397;
+      --error: #ffb5a8;
+      --error-bg: #281b18;
+      --error-border: #6b3932;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 Inter, system-ui, sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .nav {
+      min-height: 76px;
+      padding: 0 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .accent {
+      color: var(--accent);
+    }
+
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: #b7b8ae;
+      font-size: 13px;
+    }
+
+    .navlinks a:hover,
+    .back:hover,
+    .cancel:hover {
+      color: var(--accent);
+    }
+
+    .wrap {
+      width: min(760px, 90%);
+      margin: 54px auto 90px;
+    }
+
+    .back {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .eyebrow {
+      margin-top: 32px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: clamp(36px, 5vw, 52px);
+      line-height: 1.1;
+      letter-spacing: -2px;
+    }
+
+    .intro {
+      margin: 0 0 28px;
+      color: var(--muted);
+      max-width: 600px;
+    }
+
+    .panel {
+      padding: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .field {
+      margin-bottom: 22px;
+      min-width: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    input,
+    textarea {
+      display: block;
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #414239;
+      border-radius: 10px;
+      background: #11120f;
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    input[aria-invalid="true"],
+    textarea[aria-invalid="true"] {
+      border-color: var(--error);
+    }
+
+    .help {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .errorlist {
+      margin: 7px 0;
+      padding-left: 18px;
+      color: var(--error);
+      font-size: 13px;
+    }
+
+    .errorlist li {
+      margin-bottom: 3px;
+    }
+
+    .error-summary {
+      margin-bottom: 24px;
+      padding: 14px 16px;
+      border: 1px solid var(--error-border);
+      border-radius: 10px;
+      color: var(--error);
+      background: var(--error-bg);
+      font-size: 13px;
+    }
+
+    .error-summary strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .error-summary ul {
+      margin: 6px 0 0;
+      padding-left: 20px;
+    }
+
+    .error-summary li {
+      margin: 4px 0;
+    }
+
+    .section-title {
+      margin: 30px 0 6px;
+      font-size: 17px;
+    }
+
+    .section-description {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .budgets {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 18px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .cancel {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .submit {
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #10110f;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      transition: background 150ms ease, transform 150ms ease;
+    }
+
+    .submit:hover {
+      background: #c9ffab;
+      transform: translateY(-1px);
+    }
+
+    .notice {
+      margin-top: 20px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .notice strong {
+      color: var(--text);
+    }
+
+    footer {
+      padding: 26px 6%;
+      border-top: 1px solid var(--border);
+      color: #77786f;
+      font-size: 11px;
+      letter-spacing: .7px;
+    }
+
+    @media (max-width: 620px) {
+      .nav {
+        padding: 0 5%;
+      }
+
+      .wrap {
+        margin-top: 34px;
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .budgets {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .actions {
+        justify-content: space-between;
+      }
+
+      .submit {
+        padding: 12px 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .submit {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="nav">
+    <a class="brand" href="/">
+      saffron<span class="accent">.</span>
+    </a>
+
+    <nav class="navlinks" aria-label="Main navigation">
+      <a href="{% url 'runs-dashboard' %}">All runs</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <a class="back" href="{% url 'runs-dashboard' %}">
+      &larr; Back to runs
+    </a>
+
+    <div class="eyebrow">New workflow</div>
+
+    <h1>Define the objective.</h1>
+
+    <p class="intro">
+      Describe the outcome you want to achieve. Dune will propose a plan
+      for your review before Saffron saves it.
+    </p>
+
+    <form class="panel" method="post">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="error-summary" role="alert" aria-live="polite">
+          <strong>Please correct the following before continuing.</strong>
+
+          {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+          {% endif %}
+
+          {% if form.objective.errors %}
+            <div>
+              <strong>Workflow objective</strong>
+              {{ form.objective.errors }}
+            </div>
+          {% endif %}
+
+          {% if form.max_steps.errors %}
+            <div>
+              <strong>Maximum steps</strong>
+              {{ form.max_steps.errors }}
+            </div>
+          {% endif %}
+
+          {% if form.max_tool_invocations.errors %}
+            <div>
+              <strong>Tool invocations</strong>
+              {{ form.max_tool_invocations.errors }}
+            </div>
+          {% endif %}
+
+          {% if form.max_runtime_seconds.errors %}
+            <div>
+              <strong>Runtime</strong>
+              {{ form.max_runtime_seconds.errors }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="field">
+        <label for="{{ form.objective.id_for_label }}">
+          Workflow objective
+        </label>
+
+        {{ form.objective }}
+
+        <div class="help" id="objective-help">
+          Be specific about the desired outcome. Maximum 500 characters.
+          Include relevant repository names and resource IDs when known.
+        </div>
+      </div>
+
+      <h2 class="section-title">Execution budgets</h2>
+
+      <p class="section-description">
+        Set the maximum resources the proposed workflow may consume.
+      </p>
+
+      <div class="budgets">
+        <div class="field">
+          <label for="{{ form.max_steps.id_for_label }}">
+            Maximum steps
+          </label>
+
+          {{ form.max_steps }}
+
+          <div class="help">1–100 steps</div>
+        </div>
+
+        <div class="field">
+          <label for="{{ form.max_tool_invocations.id_for_label }}">
+            Tool invocations
+          </label>
+
+          {{ form.max_tool_invocations }}
+
+          <div class="help">1–500 calls</div>
+        </div>
+
+        <div class="field">
+          <label for="{{ form.max_runtime_seconds.id_for_label }}">
+            Runtime (seconds)
+          </label>
+
+          {{ form.max_runtime_seconds }}
+
+          <div class="help">1–86,400 seconds</div>
+        </div>
+      </div>
+
+      <div class="notice">
+        <strong>Review before saving.</strong>
+        Dune proposes a plan; it does not execute tools. Previewing creates
+        no run. When you confirm, Saffron validates and persists the plan
+        and applies policy and approval requirements. Confirmation does not
+        itself execute the proposed tools.
+      </div>
+
+      <div class="actions">
+        <a class="cancel" href="{% url 'runs-dashboard' %}">
+          Cancel
+        </a>
+
+        <button class="submit" type="submit">
+          Generate plan with Dune
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <footer>SAFFRON · CONTROLLED AI EXECUTION</footer>
+</body>
+</html>

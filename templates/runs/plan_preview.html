@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Review Plan · Saffron</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #10110f;
+            --panel: #191b18;
+            --border: #30332d;
+            --text: #f2f2ec;
+            --muted: #a4a79e;
+            --accent: #b7f397;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, system-ui, sans-serif;
+            line-height: 1.6;
+        }
+        main { width: min(850px, calc(100% - 36px)); margin: 64px auto; }
+        a { color: var(--accent); }
+        .brand { color: var(--accent); font-weight: 750; letter-spacing: .08em; }
+        h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; margin: 24px 0 12px; }
+        .muted { color: var(--muted); }
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 22px 0;
+        }
+        .step { border-top: 1px solid var(--border); padding: 18px 0; }
+        .step:first-child { border-top: 0; }
+        .tool { color: var(--accent); font-size: .9rem; overflow-wrap: anywhere; }
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            background: #10110f;
+            padding: 14px;
+            border-radius: 8px;
+            color: #d6d9d0;
+        }
+        button {
+            background: var(--accent);
+            color: #151712;
+            border: 0;
+            border-radius: 999px;
+            padding: 13px 20px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+        .actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        @media (max-width: 560px) {
+            main { margin: 32px auto; }
+            .panel { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div class="brand">SAFFRON</div>
+    <h1>Review the plan.</h1>
+    <p class="muted">Dune has proposed a workflow. Review every step before saving it.</p>
+
+    <section class="panel">
+        <h2>Objective</h2>
+        <p>{{ objective }}</p>
+        <p class="muted">
+            Budgets: {{ budgets.max_steps }} steps ·
+            {{ budgets.max_tool_invocations }} tool invocations ·
+            {{ budgets.max_runtime_seconds }} seconds
+        </p>
+    </section>
+
+    <section class="panel">
+        <h2>Proposed steps</h2>
+        {% for step in plan.steps %}
+            <article class="step">
+                <h3>{{ forloop.counter }}. {{ step.name }}</h3>
+                <p class="tool">{{ step.tool_name }}</p>
+                <p><strong>Target:</strong> {{ step.target_resource }}</p>
+                <p><strong>Payload</strong></p>
+                <pre>{{ step.payload }}</pre>
+            </article>
+        {% empty %}
+            <p>No steps were proposed. Return to the form and revise the objective.</p>
+        {% endfor %}
+        <p class="muted">
+            This preview does not execute tools or verify external resources.
+            Saffron will validate the plan again when you confirm it.
+        </p>
+    </section>
+
+    <div class="actions">
+        <form method="post" action="{% url 'run-confirm-plan' %}">
+            {% csrf_token %}
+            <input type="hidden" name="plan_token" value="{{ plan_token }}">
+            <button type="submit">Confirm and save plan</button>
+        </form>
+        <a href="{% url 'run-create' %}">Discard plan</a>
+    </div>
+</main>
+</body>
+</html>

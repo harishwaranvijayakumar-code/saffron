@@ -1,0 +1,1480 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Saffron is an AI workflow control plane. Plan with Dune, execute with control, and keep every action accountable.">
+    <title>Saffron — Intelligence in motion</title>
+
+    <style>
+        :root {
+            --black: #000;
+            --white: #fff;
+            --surface: #171717;
+            --card: #262626;
+            --muted: #a6a6a6;
+            --green: #b7f397;
+            --line: #343434;
+            --content: 1120px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+            margin: 0;
+            background: var(--black);
+            color: var(--white);
+            font-family: Arial, Helvetica, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 4px;
+        }
+
+        .container {
+            width: min(var(--content), calc(100% - 64px));
+            margin-inline: auto;
+        }
+
+        .navbar {
+            height: 76px;
+            background: rgba(0, 0, 0, .96);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-inner {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            font-size: 24px;
+            font-weight: 750;
+            letter-spacing: -1.4px;
+        }
+
+        .brand-mark {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            background: var(--green);
+            color: #111;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link {
+            color: #e5e5e5;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 11px 14px;
+            border-radius: 24px;
+            transition: background .2s;
+        }
+
+        .nav-link:hover {
+            background: #242424;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .nav-text {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 12px;
+            border-radius: 24px;
+        }
+
+        .nav-text:hover {
+            background: #242424;
+        }
+
+        .button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            min-height: 46px;
+            padding: 0 21px;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            background: var(--white);
+            color: var(--black);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .2s, background .2s, color .2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            background: #e8e8e8;
+        }
+
+        .button-dark {
+            background: #242424;
+            color: white;
+            border-color: #444;
+        }
+
+        .button-dark:hover {
+            background: #353535;
+        }
+
+        .button-green {
+            background: var(--green);
+            color: #101510;
+        }
+
+        .button-green:hover {
+            background: #d0ffb7;
+        }
+
+        .hero {
+            padding: 92px 0 100px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 72px;
+            align-items: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 25px;
+            color: #d5d5d5;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            box-shadow: 0 0 14px rgba(183, 243, 151, .4);
+        }
+
+        h1, h2, h3, p {
+            margin-top: 0;
+        }
+
+        h1 {
+            max-width: 570px;
+            margin-bottom: 24px;
+            font-size: clamp(48px, 6vw, 76px);
+            font-weight: 750;
+            letter-spacing: -5px;
+            line-height: .99;
+        }
+
+        .hero-description {
+            max-width: 440px;
+            color: #b6b6b6;
+            font-size: 17px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .hero-note {
+            color: #8d8d8d;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        /* Hero visual */
+
+        .hero-visual {
+            min-height: 440px;
+            position: relative;
+            display: grid;
+            place-items: center;
+        }
+
+        .visual-glow {
+            position: absolute;
+            width: 330px;
+            height: 330px;
+            background: rgba(183, 243, 151, .09);
+            filter: blur(90px);
+            border-radius: 50%;
+        }
+
+        .orbit {
+            position: absolute;
+            width: 390px;
+            height: 390px;
+            border: 1px solid #242424;
+            border-radius: 50%;
+        }
+
+        .orbit-two {
+            width: 300px;
+            height: 300px;
+            border-color: #303030;
+        }
+
+        .dune-card {
+            position: relative;
+            z-index: 2;
+            width: min(100%, 355px);
+            padding: 24px;
+            background: #f5f5f0;
+            color: #161616;
+            border-radius: 13px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, .45);
+            transform: rotate(-2deg);
+        }
+
+        .dune-card-header {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dune-avatar {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: #1d2920;
+            color: var(--green);
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .dune-card-header strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .dune-card-header small {
+            display: block;
+            color: #777;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .plan-label {
+            margin: 22px 0 12px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+
+        .plan-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid #e4e4e0;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .plan-number {
+            display: grid;
+            place-items: center;
+            width: 27px;
+            height: 27px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #e4e9df;
+            font-size: 11px;
+        }
+
+        .plan-check {
+            margin-left: auto;
+            color: #32632a;
+        }
+
+        .plan-footer {
+            margin-top: 19px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .plan-footer small {
+            color: #777;
+            font-size: 11px;
+        }
+
+        .mini-status {
+            padding: 8px 10px;
+            border-radius: 20px;
+            background: #e1f2d7;
+            color: #285121;
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .floating-card {
+            position: absolute;
+            z-index: 3;
+            padding: 16px 18px;
+            border: 1px solid #393939;
+            border-radius: 10px;
+            background: #202020;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, .35);
+        }
+
+        .floating-top {
+            top: 37px;
+            right: -4px;
+        }
+
+        .floating-bottom {
+            bottom: 36px;
+            left: -14px;
+        }
+
+        .floating-title {
+            color: #aaa;
+            font-size: 11px;
+            margin-bottom: 9px;
+        }
+
+        .floating-value {
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .floating-value span {
+            color: var(--green);
+        }
+
+        .mini-bars {
+            display: flex;
+            align-items: end;
+            gap: 5px;
+            height: 26px;
+            margin-top: 10px;
+        }
+
+        .mini-bars i {
+            display: block;
+            width: 8px;
+            border-radius: 3px 3px 0 0;
+            background: var(--green);
+        }
+
+        /* Common sections */
+
+        .section {
+            padding: 92px 0;
+        }
+
+        .section-white {
+            background: #f4f4f1;
+            color: #101010;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 35px;
+            margin-bottom: 36px;
+        }
+
+        .section-heading h2 {
+            max-width: 580px;
+            margin-bottom: 0;
+            font-size: clamp(32px, 4vw, 46px);
+            letter-spacing: -2px;
+            line-height: 1.08;
+        }
+
+        .section-heading p {
+            max-width: 350px;
+            margin-bottom: 2px;
+            color: #999;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .section-white .section-heading p {
+            color: #666;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .feature-card {
+            min-height: 238px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 25px;
+            border-radius: 9px;
+            background: var(--card);
+            transition: transform .2s, background .2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            background: #303030;
+        }
+
+        .feature-icon {
+            display: grid;
+            place-items: center;
+            width: 43px;
+            height: 43px;
+            margin-bottom: 26px;
+            border-radius: 12px;
+            background: #3a3a3a;
+            color: var(--green);
+            font-size: 20px;
+            font-weight: 750;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            letter-spacing: -.4px;
+        }
+
+        .feature-card p {
+            max-width: 290px;
+            margin-bottom: 22px;
+            color: #b9b9b9;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .text-link {
+            margin-top: auto;
+            font-size: 13px;
+            font-weight: 750;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .text-link:hover {
+            opacity: .72;
+        }
+
+        .light-card {
+            background: #fff;
+            border: 1px solid #e8e8e4;
+        }
+
+        .light-card:hover {
+            background: #eaece6;
+        }
+
+        .light-card .feature-icon {
+            background: #e8eee3;
+            color: #253a20;
+        }
+
+        .light-card p {
+            color: #666;
+        }
+
+        /* Process section */
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+        .process-visual {
+            position: relative;
+            min-height: 190px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 9px;
+            background: #222;
+            margin-bottom: 24px;
+        }
+
+        .process-visual::before,
+        .process-visual::after {
+            content: "";
+            position: absolute;
+            width: 175px;
+            height: 175px;
+            border: 1px solid #414141;
+            border-radius: 50%;
+        }
+
+        .process-visual::after {
+            width: 115px;
+            height: 115px;
+        }
+
+        .process-symbol {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            place-items: center;
+            width: 68px;
+            height: 68px;
+            border-radius: 20px;
+            background: var(--green);
+            color: #172015;
+            font-size: 28px;
+            font-weight: 800;
+            box-shadow: 0 0 50px rgba(183, 243, 151, .15);
+        }
+
+        .process-grid h3 {
+            margin-bottom: 10px;
+            font-size: 19px;
+        }
+
+        .process-grid p {
+            margin-bottom: 0;
+            color: #a5a5a5;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* Wide editorial section */
+
+        .editorial {
+            padding: 35px 0 100px;
+        }
+
+        .editorial-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            padding: 58px;
+            border-radius: 14px;
+            background: #1b1b1b;
+        }
+
+        .editorial-copy h2 {
+            max-width: 440px;
+            margin-bottom: 20px;
+            font-size: clamp(34px, 4vw, 48px);
+            letter-spacing: -2.5px;
+            line-height: 1.06;
+        }
+
+        .editorial-copy p {
+            max-width: 430px;
+            margin-bottom: 26px;
+            color: #aaa;
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        .terminal {
+            min-width: 0;
+            padding: 23px;
+            border: 1px solid #383838;
+            border-radius: 10px;
+            background: #0c0c0c;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        .terminal-head {
+            display: flex;
+            gap: 6px;
+            padding-bottom: 16px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid #2c2c2c;
+        }
+
+        .terminal-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #555;
+        }
+
+        .terminal-label {
+            margin-left: auto;
+            color: #777;
+            font-size: 10px;
+        }
+
+        .terminal-line {
+            overflow-wrap: anywhere;
+            color: #a9a9a9;
+        }
+
+        .terminal-line .green {
+            color: var(--green);
+        }
+
+        .terminal-line .white {
+            color: #eee;
+        }
+
+        .terminal-line .dim {
+            color: #686868;
+        }
+
+        /* Final CTA */
+
+        .cta {
+            padding: 88px 0 100px;
+            background: var(--green);
+            color: #111;
+        }
+
+        .cta-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .cta h2 {
+            max-width: 620px;
+            margin-bottom: 16px;
+            font-size: clamp(38px, 5vw, 58px);
+            letter-spacing: -3px;
+            line-height: 1.03;
+        }
+
+        .cta p {
+            max-width: 490px;
+            margin-bottom: 0;
+            color: #3e4b38;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .cta .button {
+            flex-shrink: 0;
+            background: #111;
+            color: #fff;
+        }
+
+        .cta .button:hover {
+            background: #292929;
+        }
+
+        /* Footer */
+
+        footer {
+            padding: 58px 0 25px;
+            background: #080808;
+        }
+
+        .footer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding-bottom: 38px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 23px;
+            color: #b0b0b0;
+            font-size: 13px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding-top: 22px;
+            border-top: 1px solid #252525;
+            color: #777;
+            font-size: 12px;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #363636;
+            border-radius: 50%;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            font-size: 21px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                width: min(100% - 44px, var(--content));
+            }
+
+            .nav-inner {
+                gap: 18px;
+            }
+
+            .nav-links {
+                gap: 0;
+            }
+
+            .nav-link {
+                padding-inline: 10px;
+            }
+
+            .hero {
+                padding: 65px 0 75px;
+            }
+
+            .hero-grid {
+                gap: 28px;
+            }
+
+            .hero-visual {
+                transform: scale(.92);
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .editorial-panel {
+                padding: 36px;
+                gap: 30px;
+            }
+
+            .floating-top {
+                right: -12px;
+            }
+
+            .floating-bottom {
+                left: -5px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .navbar {
+                height: 68px;
+            }
+
+            .container {
+                width: calc(100% - 36px);
+            }
+
+            .brand {
+                font-size: 22px;
+            }
+
+            .nav-inner {
+                justify-content: space-between;
+            }
+
+            .mobile-menu {
+                display: inline-flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 67px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+                padding: 16px 18px 20px;
+                background: #090909;
+                border-bottom: 1px solid #333;
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .nav-link {
+                padding: 14px;
+                border-radius: 8px;
+            }
+
+            .nav-actions {
+                margin-left: auto;
+                margin-right: 10px;
+                gap: 0;
+            }
+
+            .nav-actions .nav-text {
+                display: none;
+            }
+
+            .nav-actions .button {
+                min-height: 38px;
+                padding: 0 13px;
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 57px 0 58px;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            h1 {
+                max-width: 470px;
+                font-size: clamp(49px, 12vw, 68px);
+                letter-spacing: -3.5px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+                line-height: 1.8;
+            }
+
+            .hero-visual {
+                min-height: 390px;
+                margin: 0 -12px;
+                transform: scale(.91);
+            }
+
+            .orbit {
+                width: 330px;
+                height: 330px;
+            }
+
+            .orbit-two {
+                width: 255px;
+                height: 255px;
+            }
+
+            .dune-card {
+                width: min(100% - 48px, 355px);
+            }
+
+            .floating-top {
+                right: -2px;
+                top: 22px;
+            }
+
+            .floating-bottom {
+                bottom: 14px;
+                left: 0;
+            }
+
+            .section {
+                padding: 66px 0;
+            }
+
+            .section-heading {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                margin-bottom: 27px;
+            }
+
+            .section-heading h2 {
+                font-size: 35px;
+                letter-spacing: -1.7px;
+            }
+
+            .section-heading p {
+                font-size: 13px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 11px;
+            }
+
+            .feature-card {
+                min-height: 205px;
+                padding: 23px;
+            }
+
+            .feature-icon {
+                margin-bottom: 20px;
+            }
+
+            .process-grid {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .process-visual {
+                min-height: 175px;
+                margin-bottom: 18px;
+            }
+
+            .process-grid p {
+                font-size: 13px;
+            }
+
+            .editorial {
+                padding: 0 0 66px;
+            }
+
+            .editorial-panel {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 28px 21px;
+            }
+
+            .editorial-copy h2 {
+                font-size: 38px;
+            }
+
+            .terminal {
+                padding: 17px;
+                font-size: 11px;
+            }
+
+            .cta {
+                padding: 65px 0;
+            }
+
+            .cta-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cta h2 {
+                font-size: 43px;
+                letter-spacing: -2px;
+            }
+
+            footer {
+                padding-top: 38px;
+            }
+
+            .footer-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .footer-links {
+                gap: 17px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <nav class="container nav-inner" aria-label="Main navigation">
+            <a class="brand" href="#home" aria-label="Saffron home">
+                <span class="brand-mark">S</span>
+                Saffron
+            </a>
+
+            <button
+                class="mobile-menu"
+                id="menu-toggle"
+                type="button"
+                aria-label="Toggle navigation"
+                aria-expanded="false"
+                aria-controls="nav-links"
+            >☰</button>
+
+            <div class="nav-links" id="nav-links">
+                <a class="nav-link" href="#platform">Platform</a>
+                <a class="nav-link" href="#how-it-works">How it works</a>
+                <a class="nav-link" href="#dune">Dune</a>
+                <a class="nav-link" href="#trust">Trust &amp; control</a>
+            </div>
+
+            <div class="nav-actions">
+                <a class="nav-text" href="#how-it-works">Documentation</a>
+                <a class="button" href="#get-started">Explore Saffron <span aria-hidden="true">↗</span></a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="container hero-grid">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <span class="status-dot"></span>
+                        The control plane for AI workflows
+                    </div>
+
+                    <h1>Intelligence in motion.</h1>
+
+                    <p class="hero-description">
+                        Give AI the ability to work, without giving up control.
+                        Plan with Dune. Execute with Saffron. Stay in command
+                        of every action.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a class="button" href="#get-started">
+                            Explore the platform <span aria-hidden="true">→</span>
+                        </a>
+                        <a class="button button-dark" href="#dune">
+                            Meet Dune
+                        </a>
+                    </div>
+
+                    <p class="hero-note">
+                        Policy-governed execution · Human approvals ·
+                        Recoverable workflows
+                    </p>
+                </div>
+
+                <div class="hero-visual" aria-label="Illustration of Dune preparing a workflow">
+                    <div class="visual-glow"></div>
+                    <div class="orbit"></div>
+                    <div class="orbit orbit-two"></div>
+
+                    <div class="dune-card">
+                        <div class="dune-card-header">
+                            <div class="dune-avatar">D</div>
+                            <div>
+                                <strong>Dune AI</strong>
+                                <small>Workflow planning assistant</small>
+                            </div>
+                        </div>
+
+                        <div class="plan-label">Proposed workflow</div>
+
+                        <div class="plan-row">
+                            <span class="plan-number">01</span>
+                            Inspect workflow status
+                            <span class="plan-check">✓</span>
+                        </div>
+
+                        <div class="plan-row">
+                            <span class="plan-number">02</span>
+                            Analyse execution results
+                            <span class="plan-check">✓</span>
+                        </div>
+
+                        <div class="plan-row">
+                            <span class="plan-number">03</span>
+                            Request human approval
+                            <span class="plan-check">↗</span>
+                        </div>
+
+                        <div class="plan-footer">
+                            <small>Controlled by Saffron</small>
+                            <span class="mini-status">Policy-aware</span>
+                        </div>
+                    </div>
+
+                    <div class="floating-card floating-top">
+                        <div class="floating-title">Execution control</div>
+                        <div class="floating-value"><span>●</span> Policy enforced</div>
+                    </div>
+
+                    <div class="floating-card floating-bottom">
+                        <div class="floating-title">Workflow activity</div>
+                        <div class="floating-value">Actions tracked</div>
+                        <div class="mini-bars" aria-hidden="true">
+                            <i style="height: 35%"></i>
+                            <i style="height: 65%"></i>
+                            <i style="height: 48%"></i>
+                            <i style="height: 88%"></i>
+                            <i style="height: 58%"></i>
+                            <i style="height: 100%"></i>
+                            <i style="height: 72%"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="platform">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Everything AI needs to work. Everything you need to stay in control.</h2>
+                    <p>
+                        From the first proposed action to the final recorded
+                        outcome, Saffron brings the workflow under one roof.
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">✳</div>
+                        <h3>Plan with Dune</h3>
+                        <p>
+                            Turn objectives into structured workflows.
+                            Understand the proposed steps before execution begins.
+                        </p>
+                        <a class="text-link" href="#dune">Discover Dune ↗</a>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">⌘</div>
+                        <h3>Controlled execution</h3>
+                        <p>
+                            Route tool actions through explicit policies,
+                            authorization checks, and a managed worker.
+                        </p>
+                        <a class="text-link" href="#how-it-works">How execution works ↗</a>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">◈</div>
+                        <h3>Human in control</h3>
+                        <p>
+                            Review sensitive actions and make approval decisions
+                            before protected operations proceed.
+                        </p>
+                        <a class="text-link" href="#trust">Explore approvals ↗</a>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">↻</div>
+                        <h3>Failure recovery</h3>
+                        <p>
+                            Track interrupted work, preserve uncertain outcomes,
+                            and reconcile them before deciding what happens next.
+                        </p>
+                        <a class="text-link" href="#trust">Explore recovery ↗</a>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">▤</div>
+                        <h3>Evidence and audit</h3>
+                        <p>
+                            Follow recorded policy decisions, execution events,
+                            approvals, and reconciliation evidence.
+                        </p>
+                        <a class="text-link" href="#trust">Understand the audit trail ↗</a>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">⌁</div>
+                        <h3>Built to integrate</h3>
+                        <p>
+                            Connect planning and tools through a common execution
+                            layer designed to grow with your workflows.
+                        </p>
+                        <a class="text-link" href="#get-started">Explore the platform ↗</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-white" id="how-it-works">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>From intention to execution.</h2>
+                    <p>
+                        A clear path from what you want to achieve to the
+                        actions taken on your behalf.
+                    </p>
+                </div>
+
+                <div class="process-grid">
+                    <article>
+                        <div class="process-visual">
+                            <div class="process-symbol" aria-hidden="true">✳</div>
+                        </div>
+                        <h3>01. Define the objective</h3>
+                        <p>
+                            Describe the outcome you need. Dune helps structure
+                            the request into a proposed sequence of actions.
+                        </p>
+                    </article>
+
+                    <article>
+                        <div class="process-visual">
+                            <div class="process-symbol" aria-hidden="true">⌘</div>
+                        </div>
+                        <h3>02. Authorize the work</h3>
+                        <p>
+                            Saffron evaluates tool requests against policy.
+                            Actions requiring approval wait for an authorized
+                            human decision.
+                        </p>
+                    </article>
+
+                    <article>
+                        <div class="process-visual">
+                            <div class="process-symbol" aria-hidden="true">✓</div>
+                        </div>
+                        <h3>03. Execute and track</h3>
+                        <p>
+                            Workers execute permitted actions. Saffron records
+                            outcomes and surfaces failures or uncertainty for
+                            appropriate follow-up.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="dune">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Meet Dune. The intelligence behind your workflows.</h2>
+                    <p>
+                        A built-in AI assistant designed to reason about
+                        objectives and propose work within Saffron's controls.
+                    </p>
+                </div>
+
+                <div class="editorial">
+                    <div class="editorial-panel">
+                        <div class="editorial-copy">
+                            <div class="eyebrow">
+                                <span class="status-dot"></span>
+                                Your AI planning assistant
+                            </div>
+
+                            <h2>Think broadly. Act deliberately.</h2>
+
+                            <p>
+                                Dune helps translate intent into actionable
+                                plans. Saffron remains responsible for policy,
+                                approvals, execution state, and the recorded
+                                outcome. Intelligence and control work together.
+                            </p>
+
+                            <a class="button button-green" href="#get-started">
+                                Explore Saffron <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+
+                        <div class="terminal" aria-label="Illustrative workflow event display">
+                            <div class="terminal-head">
+                                <span class="terminal-dot"></span>
+                                <span class="terminal-dot"></span>
+                                <span class="terminal-dot"></span>
+                                <span class="terminal-label">WORKFLOW OVERVIEW</span>
+                            </div>
+
+                            <div class="terminal-line">
+                                <span class="dim">$</span> objective received
+                            </div>
+                            <div class="terminal-line">
+                                <span class="green">✓</span> plan prepared
+                            </div>
+                            <div class="terminal-line">
+                                <span class="green">✓</span> policy evaluation requested
+                            </div>
+                            <div class="terminal-line">
+                                <span class="white">→</span> protected action identified
+                            </div>
+                            <div class="terminal-line">
+                                <span class="white">→</span> approval required
+                            </div>
+                            <div class="terminal-line">
+                                <span class="dim">…</span> awaiting human decision
+                            </div>
+                            <br>
+                            <div class="terminal-line">
+                                <span class="green">SYSTEM</span> : control remains with Saffron
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="trust">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Autonomy needs boundaries.</h2>
+                    <p>
+                        A workflow is only as useful as your ability to
+                        understand, govern, and recover its actions.
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card light-card">
+                        <div class="feature-icon" aria-hidden="true">⊙</div>
+                        <h3>Know what is allowed</h3>
+                        <p>
+                            Explicit policy decisions distinguish permitted
+                            actions from denied or approval-gated requests.
+                        </p>
+                        <a class="text-link" href="#get-started">Explore Saffron ↗</a>
+                    </article>
+
+                    <article class="feature-card light-card">
+                        <div class="feature-icon" aria-hidden="true">Ⅱ</div>
+                        <h3>Pause for a decision</h3>
+                        <p>
+                            Approval gates provide a human checkpoint for
+                            protected actions, with decisions recorded for review.
+                        </p>
+                        <a class="text-link" href="#get-started">Explore Saffron ↗</a>
+                    </article>
+
+                    <article class="feature-card light-card">
+                        <div class="feature-icon" aria-hidden="true">↺</div>
+                        <h3>Handle uncertainty honestly</h3>
+                        <p>
+                            Interrupted operations can remain unresolved until
+                            evidence supports a definitive outcome.
+                        </p>
+                        <a class="text-link" href="#get-started">Explore Saffron ↗</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta" id="get-started">
+            <div class="container cta-inner">
+                <div>
+                    <h2>Give your AI room to work. Keep your hand on the controls.</h2>
+                    <p>
+                        Saffron brings AI planning, controlled execution,
+                        human decisions, and recovery into one workflow platform.
+                    </p>
+                </div>
+
+                <a class="button" href="/runs/">
+                    Open Saffron <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-top">
+                <a class="brand" href="#home">
+                    <span class="brand-mark">S</span>
+                    Saffron
+                </a>
+
+                <div class="footer-links">
+                    <a href="#platform">Platform</a>
+                    <a href="#how-it-works">How it works</a>
+                    <a href="#dune">Dune</a>
+                    <a href="#trust">Trust &amp; control</a>
+                    <a href="/health/">System health</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© {% now "Y" %} Saffron. Intelligence in motion.</p>
+                <p>AI workflow control plane</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById("menu-toggle");
+        const navLinks = document.getElementById("nav-links");
+
+        menuToggle.addEventListener("click", () => {
+            const isOpen = navLinks.classList.toggle("open");
+            menuToggle.setAttribute("aria-expanded", String(isOpen));
+            menuToggle.setAttribute(
+                "aria-label",
+                isOpen ? "Close navigation" : "Toggle navigation"
+            );
+            menuToggle.textContent = isOpen ? "×" : "☰";
+        });
+
+        navLinks.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => {
+                navLinks.classList.remove("open");
+                menuToggle.setAttribute("aria-expanded", "false");
+                menuToggle.setAttribute("aria-label", "Toggle navigation");
+                menuToggle.textContent = "☰";
+            });
+        });
+    </script>
+</body>
+</html>
